@@ -1,25 +1,48 @@
 import Button from "components/Button";
+import Input from "components/Input";
+import Label from "components/Label";
 import AppLayout from "components/Layouts/AppLayout";
-import { getCountries } from "lib/api/country";
-import React, { useEffect } from "react";
+import Modal from "components/Modal";
+import axios from "lib/axios";
+import React from "react";
 import DataTable from "react-data-table-component";
+import useSWR from "swr";
+
+const fetcher = () => axios.get("/api/countries").then((res) => res.data.data);
 
 const Country = () => {
-  const [data, setData] = React.useState([]);
+  const { data, error } = useSWR("/api/countries", fetcher);
 
-  const getData = async () => {
+  const [openModal, setOpenModal] = React.useState(false);
+  const [form, setForm] = React.useState({
+    name: "",
+    continent: "",
+    code: "",
+  });
+  const [search, setSearch] = React.useState("");
+
+  const handleChangeForm = (e) => {
+    const target = e.target;
+    const value = target.value;
+    const name = target.id;
+
+    setForm({
+      ...form,
+      [name]: value,
+    });
+  };
+
+  const handleSubmitForm = async () => {
+    console.log(form);
+
     try {
-      const data = await getCountries();
+      const res = await axios.post("/api/countries", form);
 
-      setData(data.data);
+      console.log(res);
     } catch (err) {
       console.log(err);
     }
   };
-
-  useEffect(() => {
-    getData();
-  }, []);
 
   return (
     <AppLayout
@@ -32,8 +55,19 @@ const Country = () => {
       <div className="py-12">
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
           <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-            <div className="p-6 bg-white border-b border-gray-200">
-              <Button>Add Country</Button>
+            <div className="p-6 bg-white border-b border-gray-200 flex justify-between">
+              <Button type="button" onClick={() => setOpenModal(true)}>
+                Add Country
+              </Button>
+              <div>
+                <Input
+                  type="text"
+                  id="search"
+                  placeholder="Search..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+              </div>
             </div>
             <DataTable
               columns={[
@@ -41,20 +75,20 @@ const Country = () => {
                   id: "name",
                   name: "Name",
                   selector: (row) => row.name,
-                  sortable: true
+                  sortable: true,
                 },
                 {
                   id: "continent",
                   name: "Continent",
                   selector: (row) => row.continent,
-                  sortable: true
+                  sortable: true,
                 },
                 {
                   id: "code",
                   name: "Code",
                   selector: (row) => row.code,
-                  sortable: true
-                }
+                  sortable: true,
+                },
               ]}
               data={data}
               pagination
@@ -62,6 +96,50 @@ const Country = () => {
           </div>
         </div>
       </div>
+      {openModal && (
+        <Modal
+          setShowModal={setOpenModal}
+          title="Add New Country"
+          onCoreEvent={handleSubmitForm}
+        >
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="name">Name</Label>
+              <Input
+                id="name"
+                type="text"
+                value={form.name}
+                className="block mt-1 w-full"
+                onChange={handleChangeForm}
+                required
+                autoFocus
+              />
+            </div>
+            <div>
+              <Label htmlFor="continent">Continent</Label>
+              <Input
+                id="continent"
+                type="text"
+                value={form.continent}
+                className="block mt-1 w-full"
+                onChange={handleChangeForm}
+                required
+              />
+            </div>
+            <div>
+              <Label htmlFor="code">Code</Label>
+              <Input
+                id="code"
+                type="text"
+                value={form.code}
+                className="block mt-1 w-full"
+                onChange={handleChangeForm}
+                required
+              />
+            </div>
+          </div>
+        </Modal>
+      )}
     </AppLayout>
   );
 };
