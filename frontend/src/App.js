@@ -8,6 +8,7 @@ import ForgotPassword from 'pages/forgot-password';
 import PasswordReset from 'pages/password-reset';
 import NotFoundPage from 'pages/404';
 import Country from 'pages/country';
+import City from 'pages/city';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/country" element={<Country />} />
+        <Route path="/city" element={<City />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
