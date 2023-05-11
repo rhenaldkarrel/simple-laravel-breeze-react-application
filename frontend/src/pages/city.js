@@ -11,7 +11,7 @@ import useSWR from 'swr';
 const fetcher = () => axios.get("/api/cities").then((res) => res.data.data);
 
 const City = () => {
-  const { data, error } = useSWR("/api/countries", fetcher);
+  const { data, error } = useSWR("/api/cities", fetcher);
 
   const [openModal, setOpenModal] = React.useState(false);
   const [form, setForm] = React.useState({
@@ -36,7 +36,7 @@ const City = () => {
     console.log(form);
 
     try {
-      const res = await axios.post("/api/countries", form);
+      const res = await axios.post("/api/cities", form);
 
       console.log(res);
     } catch (err) {
