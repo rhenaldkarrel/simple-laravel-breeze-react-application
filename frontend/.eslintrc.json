@@ -15,17 +15,9 @@
         "ignoredNodes": ["TemplateLiteral"],
         "SwitchCase": 1 }
     ],
-    "linebreak-style": [
-      "error",
-      "unix"
-    ],
     "quotes": [
       "error",
       "single"
-    ],
-    "arrow-body-style": [
-      2,
-      "as-needed"
     ],
     "lines-between-class-members": ["error", "always"] ,
     "comma-dangle": [ "error", {
