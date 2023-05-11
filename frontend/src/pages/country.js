@@ -100,6 +100,12 @@ const Country = () => {
                   selector: (row) => row.code,
                   sortable: true,
                 },
+                {
+                  id: "created_at",
+                  name: "Created At",
+                  selector: (row) => new Date(row.created_at).toLocaleDateString(),
+                  sortable: true,
+                },
               ]}
               data={data}
               pagination
