@@ -15,10 +15,6 @@
         "ignoredNodes": ["TemplateLiteral"],
         "SwitchCase": 1 }
     ],
-    "quotes": [
-      "error",
-      "single"
-    ],
     "lines-between-class-members": ["error", "always"] ,
     "comma-dangle": [ "error", {
       "arrays": "never",
