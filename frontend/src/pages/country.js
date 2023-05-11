@@ -14,7 +14,8 @@ const fetcher = (url, search) =>
 
 const Country = () => {
   const [search, setSearch] = React.useState("");
-  const { data, error } = useSWR(["/api/countries", search], fetcher);
+  const { data, mutate, error } = useSWR(["/api/countries", search], fetcher);
+  const [message, setMessage] = React.useState("");
 
   const [openModal, setOpenModal] = React.useState(false);
   const [form, setForm] = React.useState({
@@ -39,14 +40,22 @@ const Country = () => {
   };
 
   const handleSubmitForm = async () => {
-    console.log(form);
-
     try {
       const res = await axios.post("/api/countries", form);
 
-      console.log(res);
+      if (res.status === 201) {
+        setMessage("Success adding a new country!");
+        setForm({
+          name: "",
+          continent: "",
+          code: "",
+        });
+        setOpenModal(false);
+
+        mutate(["/api/cities", search]);
+      }
     } catch (err) {
-      console.log(err);
+      setMessage("Sorry, something went wrong!");
     }
   };
 
@@ -67,18 +76,21 @@ const Country = () => {
       <div className="py-12">
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
           <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-            <div className="p-6 bg-white border-b border-gray-200 flex justify-between">
-              <Button type="button" onClick={() => setOpenModal(true)}>
-                Add Country
-              </Button>
-              <div>
-                <Input
-                  type="text"
-                  id="search"
-                  placeholder="Search..."
-                  onChange={debouncedSearch}
-                />
+            <div className="p-6 bg-white border-b border-gray-200 space-y-4">
+              <div className=" flex justify-between">
+                <Button type="button" onClick={() => setOpenModal(true)}>
+                  Add Country
+                </Button>
+                <div>
+                  <Input
+                    type="text"
+                    id="search"
+                    placeholder="Search..."
+                    onChange={debouncedSearch}
+                  />
+                </div>
               </div>
+              {message && <p>{message}</p>}
             </div>
             <DataTable
               columns={[
@@ -103,7 +115,8 @@ const Country = () => {
                 {
                   id: "created_at",
                   name: "Created At",
-                  selector: (row) => new Date(row.created_at).toLocaleDateString(),
+                  selector: (row) =>
+                    new Date(row.created_at).toLocaleDateString(),
                   sortable: true,
                 },
               ]}
