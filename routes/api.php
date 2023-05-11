@@ -20,7 +20,9 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/countries', [CountryController::class, 'index']);
-Route::get('/countries/{id}', [CountryController::class, 'show']);
+Route::prefix('countries')->group(function () {
+    Route::get('/', [CountryController::class, 'index']);
+    Route::get('/{id}', [CountryController::class, 'show']);
+});
 
 Route::get('/cities', [CityController::class, 'index']);
