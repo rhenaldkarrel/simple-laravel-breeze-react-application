@@ -25,7 +25,7 @@ const Country = () => {
 
   const handleSearch = (e) => setSearch(e.target.value);
 
-  const debouncedSearch = debounce(handleSearch, 300);
+  const debouncedSearch = debounce(handleSearch, 500);
 
   const handleChangeForm = (e) => {
     const target = e.target;
