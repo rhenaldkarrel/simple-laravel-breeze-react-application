@@ -4,14 +4,17 @@ import Label from "components/Label";
 import AppLayout from "components/Layouts/AppLayout";
 import Modal from "components/Modal";
 import axios from "lib/axios";
+import { debounce } from "lodash";
 import React from "react";
 import DataTable from "react-data-table-component";
 import useSWR from "swr";
 
-const fetcher = () => axios.get("/api/countries").then((res) => res.data.data);
+const fetcher = (url, search) =>
+  axios.get(`${url}?search=${search}`).then((res) => res.data.data);
 
 const Country = () => {
-  const { data, error } = useSWR("/api/countries", fetcher);
+  const [search, setSearch] = React.useState("");
+  const { data, error } = useSWR(["/api/countries", search], fetcher);
 
   const [openModal, setOpenModal] = React.useState(false);
   const [form, setForm] = React.useState({
@@ -19,7 +22,10 @@ const Country = () => {
     continent: "",
     code: "",
   });
-  const [search, setSearch] = React.useState("");
+
+  const handleSearch = (e) => setSearch(e.target.value);
+
+  const debouncedSearch = debounce(handleSearch, 300);
 
   const handleChangeForm = (e) => {
     const target = e.target;
@@ -44,6 +50,12 @@ const Country = () => {
     }
   };
 
+  React.useEffect(() => {
+    return () => {
+      debouncedSearch.cancel();
+    };
+  }, []);
+
   return (
     <AppLayout
       header={
@@ -64,8 +76,7 @@ const Country = () => {
                   type="text"
                   id="search"
                   placeholder="Search..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
+                  onChange={debouncedSearch}
                 />
               </div>
             </div>
