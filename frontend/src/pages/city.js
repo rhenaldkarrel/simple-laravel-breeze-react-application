@@ -1,17 +1,20 @@
-import Button from 'components/Button';
-import Input from 'components/Input';
-import Label from 'components/Label';
-import AppLayout from 'components/Layouts/AppLayout';
-import Modal from 'components/Modal';
-import axios from 'lib/axios';
-import React from 'react'
-import DataTable from 'react-data-table-component';
-import useSWR from 'swr';
+import Button from "components/Button";
+import Input from "components/Input";
+import Label from "components/Label";
+import AppLayout from "components/Layouts/AppLayout";
+import Modal from "components/Modal";
+import axios from "lib/axios";
+import { debounce } from "lodash";
+import React from "react";
+import DataTable from "react-data-table-component";
+import useSWR from "swr";
 
-const fetcher = () => axios.get("/api/cities").then((res) => res.data.data);
+const fetcher = (url, search) =>
+  axios.get(`${url}?search=${search}`).then((res) => res.data.data);
 
 const City = () => {
-  const { data, error } = useSWR("/api/cities", fetcher);
+  const [search, setSearch] = React.useState("");
+  const { data, error } = useSWR(["/api/cities", search], fetcher);
 
   const [openModal, setOpenModal] = React.useState(false);
   const [form, setForm] = React.useState({
@@ -19,7 +22,10 @@ const City = () => {
     state_id: "",
     code: "",
   });
-  const [search, setSearch] = React.useState("");
+
+  const handleSearch = (e) => setSearch(e.target.value);
+
+  const debouncedSearch = debounce(handleSearch, 500);
 
   const handleChangeForm = (e) => {
     const target = e.target;
@@ -64,8 +70,7 @@ const City = () => {
                   type="text"
                   id="search"
                   placeholder="Search..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
+                  onChange={debouncedSearch}
                 />
               </div>
             </div>
@@ -142,6 +147,6 @@ const City = () => {
       )}
     </AppLayout>
   );
-}
+};
 
-export default City
+export default City;
