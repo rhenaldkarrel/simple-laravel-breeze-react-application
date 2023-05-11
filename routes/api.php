@@ -23,11 +23,11 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 Route::prefix('countries')->group(function () {
     Route::get('/', [CountryController::class, 'index']);
     Route::get('/{id}', [CountryController::class, 'show']);
-    Route::middleware('auth:api')->post('/', [CountryController::class, 'store']);
+    Route::middleware('auth:sanctum')->post('/', [CountryController::class, 'store']);
 });
 
 Route::prefix('cities')->group(function () {
     Route::get('/', [CityController::class, 'index']);
     Route::get('/{id}', [CityController::class, 'show']);
-    Route::middleware('auth:api')->post('/', [CityController::class, 'store']);
+    Route::middleware('auth:sanctum')->post('/', [CityController::class, 'store']);
 });
