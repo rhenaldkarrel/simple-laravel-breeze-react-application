@@ -34,7 +34,17 @@ class CountryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $rules = [
+            'name' => 'required|string|max:150',
+            'code' => 'required|string|max:3',
+            'continent' => 'required|string|max:50',
+        ];
+
+        $validatedData = $request->validate($rules);
+
+        $country = Country::create($validatedData);
+
+        return response()->json($country, 201);
     }
 
     /**

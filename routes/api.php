@@ -23,6 +23,7 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 Route::prefix('countries')->group(function () {
     Route::get('/', [CountryController::class, 'index']);
     Route::get('/{id}', [CountryController::class, 'show']);
+    Route::middleware('auth:api')->post('/', [CountryController::class, 'store']);
 });
 
 Route::prefix('cities')->group(function () {
