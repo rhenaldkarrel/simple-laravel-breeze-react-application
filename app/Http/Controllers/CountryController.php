@@ -10,9 +10,18 @@ class CountryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $countries = Country::all();
+
+        $keyword = $request->input('search');
+
+        $query = Country::query();
+
+        if ($keyword) {
+            $query->where('name', 'LIKE', '%' . $keyword . '%');
+        }
+
+        $countries = $query->get();
         $totalRecords = $countries->count();
 
         return response()->json([
