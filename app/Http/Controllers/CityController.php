@@ -10,9 +10,17 @@ class CityController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $cities = City::all();
+        $keyword = $request->input('search');
+
+        $query = City::query();
+
+        if ($keyword) {
+            $query->where('name', 'LIKE', '%' . $keyword . '%');
+        }
+
+        $cities = $query->get();
         $totalRecords = $cities->count();
 
         return response()->json([
