@@ -40,9 +40,9 @@ class CityController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(City $city)
+    public function show($id)
     {
-        //
+        return response()->json(City::find($id));
     }
 
     /**

@@ -25,4 +25,7 @@ Route::prefix('countries')->group(function () {
     Route::get('/{id}', [CountryController::class, 'show']);
 });
 
-Route::get('/cities', [CityController::class, 'index']);
+Route::prefix('cities')->group(function () {
+    Route::get('/', [CityController::class, 'index']);
+    Route::get('/{id}', [CityController::class, 'show']);
+});
