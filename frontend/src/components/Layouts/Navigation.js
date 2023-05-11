@@ -35,6 +35,11 @@ const Navigation = ({ user }) => {
               >
                 Country
               </CustomNavLink>
+              <CustomNavLink
+                to="/city"
+              >
+                City
+              </CustomNavLink>
             </div>
           </div>
           {/* Settings Dropdown */}
@@ -111,6 +116,16 @@ const Navigation = ({ user }) => {
               to="/dashboard"
             >
               Dashboard
+            </ResponsiveNavLink>
+            <ResponsiveNavLink
+              to="/country"
+            >
+              Country
+            </ResponsiveNavLink>
+            <ResponsiveNavLink
+              to="/city"
+            >
+              City
             </ResponsiveNavLink>
           </div>
           {/* Responsive Settings Options */}
