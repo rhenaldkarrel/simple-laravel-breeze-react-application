@@ -29,4 +29,5 @@ Route::prefix('countries')->group(function () {
 Route::prefix('cities')->group(function () {
     Route::get('/', [CityController::class, 'index']);
     Route::get('/{id}', [CityController::class, 'show']);
+    Route::middleware('auth:api')->post('/', [CityController::class, 'store']);
 });

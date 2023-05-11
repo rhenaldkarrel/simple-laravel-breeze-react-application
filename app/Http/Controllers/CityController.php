@@ -34,7 +34,17 @@ class CityController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $rules = [
+            'name' => 'required|string|max:30',
+            'state_id' => 'required|integer',
+            'code' => 'nullable|string|max:100',
+        ];
+
+        $validatedData = $request->validate($rules);
+
+        $city = City::create($validatedData);
+
+        return response()->json($city, 201);
     }
 
     /**
