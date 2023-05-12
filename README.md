@@ -1,9 +1,17 @@
 ## Installation
 
+Create new database on phpMyAdmin named `pt_mandala_technical_test`.
+
 Run this command.
 
 ```bash
 composer install
+```
+
+Copy `.env.example` in root to new `.env` file
+
+```bash
+php artisan key:generate
 ```
 
 ```bash
@@ -12,6 +20,12 @@ php artisan migrate:fresh
 
 ```bash
 php artisan serve
+```
+
+Copy the `.env.example` file to `.env` in the frontend directory and supply the URL of the backend:
+
+```bash
+REACT_APP_BACKEND_URL=http://localhost:8000
 ```
 
 Open new terminal and run this command.
