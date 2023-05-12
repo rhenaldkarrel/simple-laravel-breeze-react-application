@@ -32,4 +32,6 @@ Route::prefix('cities')->group(function () {
     Route::get('/', [CityController::class, 'index']);
     Route::get('/{id}', [CityController::class, 'show']);
     Route::middleware('auth:sanctum')->post('/', [CityController::class, 'store']);
+    Route::middleware('auth:sanctum')->put('/{id}', [CityController::class, 'update']);
+    Route::middleware('auth:sanctum')->delete('/{id}', [CityController::class, 'destroy']);
 });

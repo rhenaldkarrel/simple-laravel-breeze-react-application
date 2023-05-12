@@ -18,7 +18,14 @@ const City = () => {
   const [message, setMessage] = React.useState("");
 
   const [openModal, setOpenModal] = React.useState(false);
+  const [editModal, setEditModal] = React.useState(false);
   const [form, setForm] = React.useState({
+    name: "",
+    state_id: "",
+    code: "",
+  });
+  const [editForm, setEditForm] = React.useState({
+    id: "",
     name: "",
     state_id: "",
     code: "",
@@ -39,6 +46,17 @@ const City = () => {
     });
   };
 
+  const handleChangeEditForm = (e) => {
+    const target = e.target;
+    const value = target.value;
+    const name = target.id;
+
+    setEditForm({
+      ...editForm,
+      [name]: value,
+    });
+  };
+
   const handleSubmitForm = async () => {
     try {
       const res = await axios.post("/api/cities", form);
@@ -47,7 +65,7 @@ const City = () => {
         setMessage("Success adding a new city!");
         setForm({
           name: "",
-          continent: "",
+          state_id: "",
           code: "",
         });
         setOpenModal(false);
@@ -58,6 +76,64 @@ const City = () => {
       setMessage("Sorry, something went wrong!");
     }
   };
+
+  const handleEdit = async (row) => {
+    setEditForm({
+      id: row.id,
+      name: row.name,
+      state_id: row.state_id,
+      code: row.code,
+    });
+
+    setEditModal(true);
+  };
+
+  const handleSubmitEditForm = async () => {
+    try {
+      const res = await axios.put(`/api/cities/${editForm.id}`, editForm);
+
+      if (res.status === 201) {
+        setMessage("City updated!");
+        setEditForm({
+          name: "",
+          state_id: "",
+          code: "",
+        });
+        setEditModal(false);
+
+        mutate(["/api/cities", search]);
+      }
+    } catch (err) {
+      setMessage("Sorry, something went wrong!");
+    }
+  };
+
+  const handleDelete = async (row) => {
+    // eslint-disable-next-line no-restricted-globals
+    const isConfirmed = confirm("Are you sure?");
+
+    if (!isConfirmed) {
+      return;
+    }
+
+    try {
+      const res = await axios.delete(`/api/cities/${row.id}`);
+
+      if (res.status === 204) {
+        setMessage("City deleted!");
+
+        mutate(["/api/cities", search]);
+      }
+    } catch (err) {
+      setMessage("Sorry, something went wrong!");
+    }
+  };
+
+  React.useEffect(() => {
+    return () => {
+      debouncedSearch.cancel();
+    };
+  }, []);
 
   return (
     <AppLayout
@@ -113,6 +189,26 @@ const City = () => {
                     new Date(row.created_at).toLocaleDateString(),
                   sortable: true,
                 },
+                {
+                  name: "Actions",
+                  button: true,
+                  cell: (row) => (
+                    <div className="space-x-2">
+                      <button
+                        className="hover:opacity-75"
+                        onClick={() => handleEdit(row)}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="text-red-400 hover:opacity-75"
+                        onClick={() => handleDelete(row)}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  ),
+                },
               ]}
               data={data}
               pagination
@@ -158,6 +254,50 @@ const City = () => {
                 value={form.code}
                 className="block mt-1 w-full"
                 onChange={handleChangeForm}
+                required
+              />
+            </div>
+          </div>
+        </Modal>
+      )}
+      {editModal && (
+        <Modal
+          setShowModal={setEditModal}
+          title="Edit A City"
+          onCoreEvent={handleSubmitEditForm}
+        >
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="name">Name</Label>
+              <Input
+                id="name"
+                type="text"
+                value={editForm.name}
+                className="block mt-1 w-full"
+                onChange={handleChangeEditForm}
+                required
+                autoFocus
+              />
+            </div>
+            <div>
+              <Label htmlFor="state_id">State ID</Label>
+              <Input
+                id="state_id"
+                type="text"
+                value={editForm.state_id}
+                className="block mt-1 w-full"
+                onChange={handleChangeEditForm}
+                required
+              />
+            </div>
+            <div>
+              <Label htmlFor="code">Code</Label>
+              <Input
+                id="code"
+                type="text"
+                value={editForm.code}
+                className="block mt-1 w-full"
+                onChange={handleChangeEditForm}
                 required
               />
             </div>
