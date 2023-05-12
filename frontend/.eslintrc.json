@@ -16,7 +16,6 @@
         "SwitchCase": 1 }
     ],
     "lines-between-class-members": ["error", "always"] ,
-    "no-confusing-arrow": "error",
     "no-console": "warn",
     "no-use-before-define": 1,
     "prefer-template": 2,

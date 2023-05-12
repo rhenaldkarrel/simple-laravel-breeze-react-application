@@ -1,6 +1,4 @@
 import Button from "components/Button";
-import Dropdown from "components/Dropdown";
-import { DropdownButton } from "components/DropdownLink";
 import Input from "components/Input";
 import Label from "components/Label";
 import AppLayout from "components/Layouts/AppLayout";
@@ -20,7 +18,14 @@ const Country = () => {
   const [message, setMessage] = React.useState("");
 
   const [openModal, setOpenModal] = React.useState(false);
+  const [editModal, setEditModal] = React.useState(false);
   const [form, setForm] = React.useState({
+    name: "",
+    continent: "",
+    code: "",
+  });
+  const [editForm, setEditForm] = React.useState({
+    id: "",
     name: "",
     continent: "",
     code: "",
@@ -41,6 +46,17 @@ const Country = () => {
     });
   };
 
+  const handleChangeEditForm = (e) => {
+    const target = e.target;
+    const value = target.value;
+    const name = target.id;
+
+    setEditForm({
+      ...editForm,
+      [name]: value,
+    });
+  };
+
   const handleSubmitForm = async () => {
     try {
       const res = await axios.post("/api/countries", form);
@@ -54,7 +70,40 @@ const Country = () => {
         });
         setOpenModal(false);
 
-        mutate(["/api/cities", search]);
+        mutate(["/api/countries", search]);
+      }
+    } catch (err) {
+      setMessage("Sorry, something went wrong!");
+    }
+  };
+
+  const handleEdit = async (row) => {
+    setEditForm({
+      id: row.id,
+      name: row.name,
+      continent: row.code,
+      code: row.code,
+    });
+
+    setEditModal(true);
+  };
+
+  const handleSubmitEditForm = async () => {
+    try {
+      console.log('form:', editForm)
+      const res = await axios.put(`/api/countries/${editForm.id}`, editForm);
+      console.log('res:', res)
+
+      if (res.status === 201) {
+        setMessage("Country updated!");
+        setEditForm({
+          name: "",
+          continent: "",
+          code: "",
+        });
+        setEditModal(false);
+
+        mutate(["/api/countries", search]);
       }
     } catch (err) {
       setMessage("Sorry, something went wrong!");
@@ -125,31 +174,20 @@ const Country = () => {
                   name: "Actions",
                   button: true,
                   cell: (row) => (
-                    <Dropdown
-                      align="right"
-                      width="48"
-                      trigger={
-                        <button className="flex items-center text-sm font-medium text-gray-500 hover:text-gray-700 focus:outline-none transition duration-150 ease-in-out">
-                          <div>Action</div>
-                          <div className="ml-1">
-                            <svg
-                              className="fill-current h-4 w-4"
-                              xmlns="http://www.w3.org/2000/svg"
-                              viewBox="0 0 20 20"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                clipRule="evenodd"
-                              />
-                            </svg>
-                          </div>
-                        </button>
-                      }
-                    >
-                      <DropdownButton onClick={() => {}}>Edit</DropdownButton>
-                      <DropdownButton className="text-red-400" onClick={() => {}}>Delete</DropdownButton>
-                    </Dropdown>
+                    <div className="space-x-2">
+                      <button
+                        className="hover:opacity-75"
+                        onClick={() => handleEdit(row)}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="text-red-400 hover:opacity-75"
+                        onClick={() => {}}
+                      >
+                        Delete
+                      </button>
+                    </div>
                   ),
                 },
               ]}
@@ -197,6 +235,50 @@ const Country = () => {
                 value={form.code}
                 className="block mt-1 w-full"
                 onChange={handleChangeForm}
+                required
+              />
+            </div>
+          </div>
+        </Modal>
+      )}
+      {editModal && (
+        <Modal
+          setShowModal={setEditModal}
+          title="Edit A Country"
+          onCoreEvent={handleSubmitEditForm}
+        >
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="name">Name</Label>
+              <Input
+                id="name"
+                type="text"
+                value={editForm.name}
+                className="block mt-1 w-full"
+                onChange={handleChangeEditForm}
+                required
+                autoFocus
+              />
+            </div>
+            <div>
+              <Label htmlFor="continent">Continent</Label>
+              <Input
+                id="continent"
+                type="text"
+                value={editForm.continent}
+                className="block mt-1 w-full"
+                onChange={handleChangeEditForm}
+                required
+              />
+            </div>
+            <div>
+              <Label htmlFor="code">Code</Label>
+              <Input
+                id="code"
+                type="text"
+                value={editForm.code}
+                className="block mt-1 w-full"
+                onChange={handleChangeEditForm}
                 required
               />
             </div>

@@ -67,7 +67,7 @@ class CountryController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Country $country)
+    public function edit(Request $request, $id)
     {
         //
     }
@@ -75,9 +75,19 @@ class CountryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Country $country)
+    public function update(Request $request, Country $country, $id)
     {
-        //
+        $rules = [
+            'name' => 'required|string|max:150',
+            'code' => 'required|string|max:3',
+            'continent' => 'required|string|max:50',
+        ];
+
+        $validatedData = $request->validate($rules);
+
+        $country::find($id)->update($validatedData);
+
+        return response()->json("Country updated!", 201);
     }
 
     /**
