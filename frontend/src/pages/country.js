@@ -90,9 +90,7 @@ const Country = () => {
 
   const handleSubmitEditForm = async () => {
     try {
-      console.log('form:', editForm)
       const res = await axios.put(`/api/countries/${editForm.id}`, editForm);
-      console.log('res:', res)
 
       if (res.status === 201) {
         setMessage("Country updated!");
