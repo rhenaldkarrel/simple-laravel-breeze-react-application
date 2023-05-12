@@ -25,6 +25,7 @@ Route::prefix('countries')->group(function () {
     Route::get('/{id}', [CountryController::class, 'show']);
     Route::middleware('auth:sanctum')->post('/', [CountryController::class, 'store']);
     Route::middleware('auth:sanctum')->put('/{id}', [CountryController::class, 'update']);
+    Route::middleware('auth:sanctum')->delete('/{id}', [CountryController::class, 'destroy']);
 });
 
 Route::prefix('cities')->group(function () {

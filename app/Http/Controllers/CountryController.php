@@ -93,8 +93,10 @@ class CountryController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Country $country)
+    public function destroy(Country $country, $id)
     {
-        //
+        $country::find($id)->delete();
+
+        return response()->json('Country deleted!', 204);
     }
 }

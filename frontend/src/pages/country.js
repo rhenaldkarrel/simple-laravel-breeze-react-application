@@ -108,6 +108,27 @@ const Country = () => {
     }
   };
 
+  const handleDelete = async (row) => {
+    // eslint-disable-next-line no-restricted-globals
+    const isConfirmed = confirm("Are you sure?");
+
+    if (!isConfirmed) {
+      return;
+    }
+
+    try {
+      const res = await axios.delete(`/api/countries/${row.id}`);
+
+      if (res.status === 204) {
+        setMessage("Country deleted!");
+
+        mutate(["/api/countries", search]);
+      }
+    } catch (err) {
+      setMessage("Sorry, something went wrong!");
+    }
+  };
+
   React.useEffect(() => {
     return () => {
       debouncedSearch.cancel();
@@ -181,7 +202,7 @@ const Country = () => {
                       </button>
                       <button
                         className="text-red-400 hover:opacity-75"
-                        onClick={() => {}}
+                        onClick={() => handleDelete(row)}
                       >
                         Delete
                       </button>
